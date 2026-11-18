@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10223c">
+  <title>Aurora Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="background" id="background" aria-hidden="true">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orb orb-three"></div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">A</span><span>Aurora</span><small>FOCUS</small></div>
+    <div class="top-actions">
+      <button class="icon-button" id="shortcutButton" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">⌘</button>
+      <button class="icon-button" id="changeBackground" type="button" title="Change background" aria-label="Change background">✦</button>
+      <button class="icon-button" id="settingsButton" type="button" title="Settings" aria-label="Open settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="hero" aria-label="Personal dashboard">
+      <p class="date" id="date">Monday, 1 January</p>
+      <h1 class="clock" id="clock">00:00</h1>
+      <div class="greeting-row">
+        <span id="greeting">Good morning</span>,
+        <button class="name-button" id="nameButton" type="button" title="Edit your name"><span id="name">friend</span>.</button>
+      </div>
+
+      <form class="focus-card" id="focusForm">
+        <label for="focusInput">Goal of the day</label>
+        <div class="focus-entry">
+          <input id="focusInput" type="text" maxlength="100" autocomplete="off" placeholder="What would make today successful?">
+          <button type="submit">Save</button>
+        </div>
+      </form>
+
+      <section class="focus-saved hidden" id="focusSaved" aria-live="polite">
+        <p>Goal of the day</p>
+        <div><button class="check-button" id="completeFocus" type="button" aria-label="Complete focus">✓</button><strong id="focusText"></strong><button class="text-button" id="editFocus" type="button">Edit</button></div>
+      </section>
+
+      <button class="start-focus-button" id="openFocus" type="button">Start Focus Mode</button>
+    </section>
+
+    <aside class="side-column">
+      <section class="todo-card" aria-label="To-do list">
+        <div class="panel-heading"><div><span>Today</span><h2>To-do list</h2></div><strong id="taskCount">0 / 0</strong></div>
+        <form id="todoForm" class="todo-entry">
+          <input id="todoInput" type="text" maxlength="90" autocomplete="off" placeholder="Add a task…">
+          <button type="submit" aria-label="Add task">+</button>
+        </form>
+        <ul id="todoList" class="todo-list"></ul>
+        <p class="empty-tasks" id="emptyTasks">Your list is clear. Add the first task.</p>
+      </section>
+      <section class="insights-card" aria-label="Weekly focus insights">
+        <div class="panel-heading"><div><span>Last 7 days</span><h2>Focus insights</h2></div><strong id="streak">0 day streak</strong></div>
+        <div class="stat-grid">
+          <div><strong id="weekMinutes">0</strong><span>focus min</span></div>
+          <div><strong id="weekSessions">0</strong><span>sessions</span></div>
+          <div><strong id="weekTasks">0</strong><span>tasks done</span></div>
+        </div>
+        <div class="week-chart" id="weekChart" aria-label="Focus minutes for the last seven days"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer>
+    <blockquote id="quote">“Clarity comes from engagement, not thought.”</blockquote>
+    <p id="quoteAuthor">— Marie Forleo</p>
+  </footer>
+
+  <dialog id="nameDialog">
+    <form method="dialog" id="nameForm">
+      <h2>What should Aurora call you?</h2>
+      <input id="nameInput" type="text" maxlength="40" autocomplete="name" placeholder="Your name">
+      <div class="dialog-actions"><button type="button" id="cancelName" class="secondary">Cancel</button><button type="submit" id="saveName">Save</button></div>
+    </form>
+  </dialog>
+
+  <section class="focus-overlay hidden" id="focusOverlay" aria-label="Focus mode">
+    <button class="exit-focus" id="exitFocus" type="button">Exit focus</button>
+    <div class="mode-switch" id="modeSwitch" aria-label="Session type">
+      <button class="active" type="button" data-mode="focus">Focus</button>
+      <button type="button" data-mode="break">Break</button>
+    </div>
+    <p class="focus-label" id="sessionLabel">FOCUS SESSION</p>
+    <h2 id="focusGoal">Stay with the task</h2>
+    <div class="timer-ring" id="timerRing"><div class="timer" id="timer">25:00</div></div>
+    <div class="timer-presets" id="timerPresets">
+      <button type="button" data-minutes="5">5 min</button>
+      <button type="button" data-minutes="15">15 min</button>
+      <button type="button" data-minutes="25" class="active">25 min</button>
+      <button type="button" data-minutes="45">45 min</button>
+      <button type="button" data-minutes="60">60 min</button>
+    </div>
+    <label class="custom-time">Custom <input id="customMinutes" type="number" min="1" max="180" inputmode="numeric" placeholder="min"><button id="applyCustomTime" type="button">Apply</button></label>
+    <div class="focus-actions">
+      <button class="primary-action" id="startTimer" type="button">Start</button>
+      <button class="secondary-action" id="resetTimer" type="button">Reset</button>
+    </div>
+    <label class="sound-control" for="soundSelect">Ambient sound
+      <select id="soundSelect">
+        <option value="off">Off</option>
+        <option value="rain">Soft rain</option>
+        <option value="brown">Brown noise</option>
+        <option value="music">Calm focus music</option>
+      </select>
+    </label>
+    <p class="focus-note">Aurora can enter full screen to reduce distractions. Press Esc at any time to leave full screen.</p>
+  </section>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" id="settingsForm">
+      <p class="dialog-kicker">PERSONALISE AURORA</p>
+      <h2>Settings</h2>
+      <label class="setting-row"><span><b>Your name</b><small>Used in the daily greeting</small></span><input id="settingsName" type="text" maxlength="40" autocomplete="name"></label>
+      <label class="setting-row"><span><b>Default focus length</b><small>From 1 to 180 minutes</small></span><input id="defaultMinutes" type="number" min="1" max="180"></label>
+      <label class="setting-row"><span><b>Enter full screen</b><small>Reduce distractions when focus mode opens</small></span><input id="fullscreenSetting" type="checkbox"></label>
+      <label class="setting-row"><span><b>24-hour clock</b><small>Turn off for AM/PM format</small></span><input id="clockSetting" type="checkbox"></label>
+      <div class="data-actions"><button id="exportData" type="button" class="secondary">Export my data</button><button id="resetData" type="button" class="danger">Reset all data</button></div>
+      <div class="dialog-actions"><button type="button" id="cancelSettings" class="secondary">Cancel</button><button type="submit">Save settings</button></div>
+      <p class="privacy-note">Your goals, tasks and statistics stay locally in your browser.</p>
+    </form>
+  </dialog>
+
+  <dialog id="shortcutDialog">
+    <form method="dialog">
+      <p class="dialog-kicker">WORK FASTER</p>
+      <h2>Keyboard shortcuts</h2>
+      <dl class="shortcut-list"><div><dt>F</dt><dd>Open focus mode</dd></div><div><dt>N</dt><dd>Add a new task</dd></div><div><dt>Space</dt><dd>Start or pause timer</dd></div><div><dt>Esc</dt><dd>Exit focus mode</dd></div></dl>
+      <div class="dialog-actions"><button type="submit">Done</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="onboardingDialog" class="onboarding-dialog">
+    <form method="dialog" id="onboardingForm">
+      <div class="onboarding-logo" aria-hidden="true">A</div>
+      <p class="dialog-kicker">WELCOME TO AURORA FOCUS</p>
+      <h2>Turn intention into progress.</h2>
+      <p class="onboarding-intro">Aurora is a private productivity dashboard designed to help you plan the day, work with intention and understand your focus habits.</p>
+      <div class="onboarding-features">
+        <div><span>01</span><strong>Choose one daily goal</strong><small>Define what would make today successful.</small></div>
+        <div><span>02</span><strong>Work in focused sessions</strong><small>Use the timer, ambient sound and distraction-free mode.</small></div>
+        <div><span>03</span><strong>Review your progress</strong><small>Track sessions, completed tasks and your activity streak.</small></div>
+      </div>
+      <button class="onboarding-start" type="submit">Set up my dashboard</button>
+      <p class="privacy-note">No account. No tracking. Your information stays in this browser.</p>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
