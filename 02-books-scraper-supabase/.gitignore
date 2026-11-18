@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+books.csv
+*.csv.tmp
+.pytest_cache/
+.coverage
+.vscode/
+.DS_Store
+Thumbs.db
+
