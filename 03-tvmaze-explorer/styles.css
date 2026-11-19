@@ -255,3 +255,19 @@ a { color: inherit; }
   .suggestions { width: 100%; }
   .site-footer { display: grid; }
 }
+/* Fix: prevent search suggestions from being clipped */
+body {
+  overflow-x: hidden;
+}
+
+.hero {
+  overflow: visible;
+}
+
+.hero::after {
+  right: 0;
+  bottom: 0;
+  transform: rotate(12deg);
+  transform-origin: bottom right;
+  pointer-events: none;
+}
