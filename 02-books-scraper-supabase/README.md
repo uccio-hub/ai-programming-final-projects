@@ -28,6 +28,30 @@ The project saves data in three deliberate layers:
 
 Leaf & Letter lets a user search by title, filter by category/rating/price, change sorting, paginate, open accessible book details, save favourites, share filter URLs and request a random recommendation. It displays collection metrics and whether data came from live Supabase or the fallback snapshot.
 
+## Feature demonstration
+
+The pipeline screenshot above records the completed 1,000-book synchronization. The following screenshots demonstrate the live catalogue and its main user flows.
+
+| Live catalogue | Search and saved books |
+|---|---|
+| ![Leaf and Letter homepage with live-data status and collection metrics](docs/features/catalogue-home.png) | ![Alice title search with saved-book controls](docs/features/search-and-saved.png) |
+| The homepage reports live Supabase data, 1,000 indexed books, 50 categories, the average rating and last synchronization date. | Title search narrows the catalogue, while heart controls save books locally and the Saved counter reflects the selection. |
+
+| Complete book details | Random recommendation |
+|---|---|
+| ![Book detail dialog with image, price, description, stock and UPC](docs/features/book-details.png) | ![Randomly selected Legend book detail](docs/features/random-recommendation.png) |
+| The accessible detail view combines the cover, category, rating, price, description, availability, reviews, UPC and original listing. | **Surprise me** selects a random catalogue record and opens its complete detail view. |
+
+| Combined filters and sorting | Pagination |
+|---|---|
+| ![Business, four-star, price and highest-rated filters applied together](docs/features/filters-and-sorting.png) | ![Second catalogue page with previous and next controls](docs/features/pagination.png) |
+| Category, minimum rating, price ceiling and sort order can be combined in one query. | Previous/Next navigation exposes the full collection without rendering all 1,000 cards at once. |
+
+| Supabase persistence |
+|---|
+| ![Supabase table containing 1,000 normalized book records](docs/features/supabase-records.png) |
+| The PostgreSQL table contains 1,000 normalized records with stable book IDs, titles, categories and typed price fields. |
+
 ## Architecture
 
 ```mermaid
