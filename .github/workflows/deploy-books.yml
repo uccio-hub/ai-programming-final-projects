@@ -19,13 +19,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+  build:
+    name: Prepare website
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -36,8 +32,19 @@ jobs:
       - name: Upload books website
         uses: actions/upload-pages-artifact@v4
         with:
+          name: github-pages
           path: "02-books-scraper-supabase/web"
 
+  deploy:
+    name: Publish website
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
