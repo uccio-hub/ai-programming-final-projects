@@ -1,0 +1,43 @@
+name: Deploy Books Catalogue
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "02-books-scraper-supabase/web/**"
+      - ".github/workflows/deploy-books.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload books website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: "02-books-scraper-supabase/web"
+
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4
