@@ -1,11 +1,14 @@
-name: Deploy Books Catalogue
+name: Deploy All Projects
 
 on:
   push:
     branches:
       - main
     paths:
+      - "index.html"
+      - "01-chrome-extension/**"
       - "02-books-scraper-supabase/web/**"
+      - "03-tvmaze-explorer/**"
       - ".github/workflows/deploy-books.yml"
   workflow_dispatch:
 
@@ -20,7 +23,7 @@ concurrency:
 
 jobs:
   build:
-    name: Prepare website
+    name: Prepare all projects
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -29,14 +32,35 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload books website
+      - name: Prepare website files
+        run: |
+          mkdir -p _site/01-chrome-extension
+          mkdir -p _site/02-books-scraper-supabase
+          mkdir -p _site/03-tvmaze-explorer
+
+          cp index.html _site/index.html
+
+          cp 01-chrome-extension/dashboard.html _site/01-chrome-extension/
+          cp 01-chrome-extension/dashboard.js _site/01-chrome-extension/
+          cp 01-chrome-extension/styles.css _site/01-chrome-extension/
+          cp -R 01-chrome-extension/backgrounds _site/01-chrome-extension/
+          cp -R 01-chrome-extension/icons _site/01-chrome-extension/
+
+          cp -R 02-books-scraper-supabase/web _site/02-books-scraper-supabase/
+
+          cp 03-tvmaze-explorer/index.html _site/03-tvmaze-explorer/
+          cp 03-tvmaze-explorer/app.js _site/03-tvmaze-explorer/
+          cp 03-tvmaze-explorer/styles.css _site/03-tvmaze-explorer/
+
+          touch _site/.nojekyll
+
+      - name: Upload all projects
         uses: actions/upload-pages-artifact@v4
         with:
-          name: github-pages
-          path: "02-books-scraper-supabase/web"
+          path: "_site"
 
   deploy:
-    name: Publish website
+    name: Publish all projects
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -46,5 +70,3 @@ jobs:
       - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages
