@@ -181,6 +181,8 @@ Limitations:
 - the fallback snapshot is static until the pipeline is run again with `--export-json`;
 - there is no production scheduler, monitoring or incremental change detection.
 
+To the best of my knowledge no tutorial code or other external code was copied into this project beyond the AI assistance described here.
+
 AI assistance (ChatGPT/Codex) was used to explain setup steps, review architecture, suggest defensive improvements and organize documentation. I executed the pipeline and database operations, inspected results, made the implementation decisions, and reviewed the final code. See [`AUDIT.md`](AUDIT.md) for the documented audit.
 
 ## Repository structure

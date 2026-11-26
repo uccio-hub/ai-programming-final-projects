@@ -6,7 +6,7 @@ Scope: repository contents, privacy, exclusions, documentation, setup reproducib
 
 ## How the audit was run
 
-The publication audit prompt from the course submission guidelines was run with a coding assistant from the root of this project folder (`01-chrome-extension`). The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
+The publication audit prompt from the course submission guidelines was run from the root of this project folder (`01-chrome-extension`), with ChatGPT Plus on 19 November and with Claude on 26 November. The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
 
 ## 1. Baseline audit
 
@@ -63,4 +63,6 @@ The audit prompt was run again on the final repository, after the last commits o
 
 Re-check after fixes: `node --check dashboard.js` and `node --check background.js` pass; `manifest.json` parses as JSON and still declares only `storage`, `alarms` and `notifications`.
 
-Could not verify automatically: the new-tab override in a real Chrome profile. It must be checked manually by loading the unpacked extension and opening a new tab.
+Manual check after the fixes (26 November 2026): the unpacked extension was reloaded in Chrome and a new tab opened the Aurora dashboard.
+
+Open point: the three images in `backgrounds/` were taken from files on my computer and I could not confirm their original author or licence. This is disclosed in the README.

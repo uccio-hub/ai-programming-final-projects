@@ -6,7 +6,7 @@ Scope: secrets, dependencies, API handling, browser persistence, UI behavior, do
 
 ## How the audit was run
 
-The publication audit prompt from the course submission guidelines was run with a coding assistant from the root of this project folder (`03-tvmaze-explorer`). The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
+The publication audit prompt from the course submission guidelines was run from the root of this project folder (`03-tvmaze-explorer`), with ChatGPT Plus on 19 November and with Claude on 26 November. The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
 
 ## 1. Baseline audit
 

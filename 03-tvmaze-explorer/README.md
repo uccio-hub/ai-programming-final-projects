@@ -122,6 +122,8 @@ Limitations:
 - there is no service worker/PWA installation and no automated live-API end-to-end test;
 - some optional resources may be absent for a show, so profiles can be partially complete.
 
+To the best of my knowledge no tutorial code or other external code was copied into this project beyond the AI assistance described here.
+
 AI assistance (ChatGPT/Codex) was used for API explanation, interface iteration, debugging, code review and documentation structure. I selected the features, ran and evaluated the app, reported interface problems, reviewed the fixes and verified the final search behavior. See [`AUDIT.md`](AUDIT.md) for the audit trail.
 
 ## Architecture

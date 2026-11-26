@@ -6,7 +6,7 @@ Scope: secrets, data files, dependencies, scraper/database/frontend documentatio
 
 ## How the audit was run
 
-The publication audit prompt from the course submission guidelines was run with a coding assistant from the root of this project folder (`02-books-scraper-supabase`). The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
+The publication audit prompt from the course submission guidelines was run from the root of this project folder (`02-books-scraper-supabase`), with ChatGPT Plus on 19 November and with Claude on 26 November. The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
 
 ## 1. Baseline audit
 
@@ -72,7 +72,8 @@ The audit prompt was run again on the final repository, after the last commits o
 | Categories "Default" and "Add a comment" could look like a scraper bug. | Possible concern | Checked: they are real source categories. Disclosed in Limitations. |
 | `web/config.js` contains the real project URL and publishable key instead of placeholders. | Possible concern | Kept deliberately: the publishable key is designed for browsers and RLS limits it to `SELECT`. The server secret is only in the ignored `.env`. |
 | Server secret, `.env` or private keys in tracked files or Git history | None found | No action. |
+| The Supabase server secret had appeared in a screenshot I shared in a private AI chat during development (never in this repository). | Confirmed, outside the repository | Rotated the secret in Supabase, so the exposed value no longer works; the new value exists only in the ignored local `.env`. |
 
 Re-check after fixes: `python -m py_compile` passes for all entry points; `python -m unittest discover -s tests` passes 6 tests, 0 failures.
 
-Could not verify in the follow-up environment: a live scrape and the Supabase connection (network access to the source and to Supabase was not available). These were verified on 19 November and should be repeated with `py pipeline.py --limit 10` before submission.
+Could not verify in the follow-up environment: a live scrape and the Supabase connection (network access to the source and to Supabase was not available). These were verified on 19 November. I believe the 10-book sample (`py pipeline.py --limit 10`) ran successfully again after the fixes, but I did not keep its output, so the 19 November results remain the recorded evidence.
