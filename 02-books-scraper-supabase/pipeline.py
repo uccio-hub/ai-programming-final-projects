@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import time
 
-from scraper import BookScraper, write_csv
+from scraper import BookScraper, write_csv, write_json
 from supabase_client import count_books, get_client, upsert_books
 
 
@@ -16,6 +16,11 @@ def main() -> None:
     parser.add_argument("--delay", type=float, default=0.15, help="Request delay")
     parser.add_argument("--timeout", type=float, default=20, help="HTTP timeout")
     parser.add_argument("--batch-size", type=int, default=100, help="Upsert batch")
+    parser.add_argument(
+        "--export-json",
+        default=None,
+        help="Also refresh the web fallback snapshot, e.g. web/data/books-fallback.json",
+    )
     parser.add_argument(
         "--skip-csv",
         action="store_true",
@@ -40,6 +45,8 @@ def main() -> None:
         raise RuntimeError("The scraper returned no books; nothing was synchronized")
     if not args.skip_csv:
         write_csv(books, args.csv)
+    if args.export_json:
+        write_json(books, args.export_json)
 
     client = get_client()
     written = upsert_books(client, books, batch_size=args.batch_size)

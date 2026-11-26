@@ -1,10 +1,11 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from scraper import BookScraper, integer, money, write_csv
+from scraper import BookScraper, integer, money, write_csv, write_json
 
 
 DETAIL_HTML = """
@@ -81,7 +82,14 @@ class CsvTests(unittest.TestCase):
         self.assertIn("book_id,title", text)
         self.assertIn("abc123,Example Book", text)
 
+    def test_fallback_json_round_trips(self):
+        rows = [{"book_id": "abc123", "title": "Café Book", "price_gbp": 12.5}]
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory) / "web" / "data" / "books-fallback.json"
+            write_json(rows, destination)
+            loaded = json.loads(destination.read_text(encoding="utf-8"))
+        self.assertEqual(loaded, rows)
+
 
 if __name__ == "__main__":
     unittest.main()
-
