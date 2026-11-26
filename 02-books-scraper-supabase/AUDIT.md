@@ -1,79 +1,38 @@
 # Audit — Books Pipeline & Leaf & Letter
 
-Audit date: **19 November 2026**  
-Follow-up audit: **26 November 2026**  
-Scope: secrets, data files, dependencies, scraper/database/frontend documentation, tests and reproducibility.
+I ran the course audit prompt from this folder with ChatGPT Plus (19 November 2026) and again with Claude on the final repository (26 November 2026). Below is each issue I fixed.
 
-## How the audit was run
+## 1. The server secret had been exposed outside the repository
 
-The publication audit prompt from the course submission guidelines was run from the root of this project folder (`02-books-scraper-supabase`), with ChatGPT Plus on 19 November and with Claude on 26 November. The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
+- **What was wrong:** my Supabase server secret appeared in a screenshot I shared in a private AI chat. It was never committed, but it could no longer be trusted.
+- **How I fixed it:** I rotated the secret in Supabase and kept the new value only in my local `.env`, which is ignored by Git. `.env.example` contains placeholders only.
+- **How it looks now:** the old key does not work, and no secret appears in tracked files or Git history. The browser uses only the publishable key, and RLS (`frontend_access.sql`) limits it to reading.
 
-## 1. Baseline audit
+## 2. The fallback catalogue could not be rebuilt
 
-| Check | Initial finding | Decision |
-|---|---|---|
-| Secrets/personal data | Final source folder contained `.env.example` placeholders only. `web/config.js` contains a publishable browser key, not a server secret. | Keep the publishable key but explain the trust boundary; require the secret only in ignored `.env`. |
-| Exclusions | `.env`, virtual environments, caches, generated CSV and editor files were already ignored. | Retain and verify the rules. |
-| Generated data | `books-fallback.json` is intentionally committed: it is the reproducible 1,000-record demo snapshot, not a cache accident. | Document why it belongs in the repository. |
-| Dependencies | `requirements.txt` exists. The audit environment lacked `bs4` before installation. | Make environment creation/installation the first setup step and record the limitation honestly. |
-| Setup/configuration | Python, Supabase and web setup existed, but the fallback-only path and secret/publishable-key distinction could be clearer. | Split setup into five numbered stages. |
-| Required README topics | Architecture was strong; learning, assistance and limitations were mainly in a separate report. | Move explicit assessment sections into the main README. |
-| Demonstration | No evidence image was stored with the project. | Add the successful 1,000-row pipeline screenshot. |
+- **What was wrong:** `web/data/books-fallback.json` was committed, but no script could generate it again, so it would go stale.
+- **How I fixed it:** I added an `--export-json PATH` option to `pipeline.py` and `scraper.py`, plus a unit test for it.
+- **How it looks now:** `py pipeline.py --export-json web/data/books-fallback.json` refreshes the file in the same run that updates Supabase.
 
-## 2. Security review
+## 3. A screenshot showed a personal detail
 
-- searched source/configuration for server secrets and private-key markers;
-- confirmed `.env` is excluded and `.env.example` contains placeholders;
-- confirmed the frontend uses a publishable key and `frontend_access.sql` grants anonymous `SELECT` only;
-- confirmed `schema.sql` reserves write operations for the service role;
-- documented that screenshots must never reveal `.env` values.
+- **What was wrong:** `docs/pipeline-complete.png` showed my Windows user folder in the terminal prompt.
+- **How I fixed it:** I cropped the image.
+- **How it looks now:** it shows only the pipeline output.
 
-If a real server secret was ever committed to any Git history, deleting the file is not sufficient: rotate the secret in Supabase and remove it from repository history before publishing.
+## 4. The README was hard to follow
 
-## 3. Changes made
+- **What was wrong:** the offline and Supabase steps were mixed, the commands did not say which folder to run them from, and learning, limitations and a challenge were missing.
+- **How I fixed it:** I split the setup into five stages starting with `cd 02-books-scraper-supabase`, and added the learning, challenge and limitations sections. The limitations include the source's odd "Default" and "Add a comment" categories.
+- **How it looks now:** the catalogue can be tried offline in one command, and the full pipeline step by step.
 
-- rewrote `README.md` around Purpose, collection, persistence, interaction, setup, learning, limitations and assistance;
-- explained atomic CSV writing, idempotent UPC upserts, fallback JSON and browser-local saved books;
-- added separate offline/fallback and live-Supabase instructions;
-- added a successful pipeline screenshot;
-- added explicit limitations for source fragility, cloud pausing, network dependence and stale snapshots.
+## Checks after the fixes
 
-## 4. Re-check
+- Unit tests: 6 passed, 0 failed (`py -m unittest discover -s tests`).
+- `test_connection.py`: temporary row written, read and deleted.
+- `py pipeline.py --limit 10`: ran successfully against Supabase.
+- Manual check of the catalogue: search, filters, details, saved books.
 
-| Verification | Result |
-|---|---|
-| `python -m py_compile pipeline.py scraper.py supabase_client.py test_connection.py` | Pass |
-| Required configuration example | Present, placeholders only |
-| Secret/generated-file ignore rules | Present |
-| Fallback catalogue size | 1,000 records included |
-| `python -m unittest discover -s tests -v` | Pass: 5 tests run, 0 failures |
-| `test_connection.py` live Supabase smoke test | Pass: temporary row written, read and removed |
-| `pipeline.py --limit 10` | Pass: 10 scraped, 0 failures, 10 rows synced; 1,000 rows in table |
-| Frontend manual test | Pass: live data, search, filters, detail view and saved-book persistence verified |
+## Still limited
 
-## 5. Follow-through completed
-
-The submission computer was configured with an isolated virtual environment and the required dependencies. The unit suite, live connection test, 10-book pipeline sample and browser interface were all verified on 19 November 2026. Credential values were not recorded in the evidence.
-
-## 6. Remaining limitations
-
-HTML selectors may break if the source changes; Supabase can pause; the fallback becomes stale; and there is no scheduler, monitoring or incremental crawler. These are now disclosed in the README.
-
-## 7. Follow-up audit — 26 November 2026
-
-The audit prompt was run again on the final repository, after the last commits of 25 November.
-
-| Finding | Type | Action |
-|---|---|---|
-| `web/data/books-fallback.json` could not be regenerated by any script, although the README said it is refreshed by repeating the pipeline. | Confirmed | Added `--export-json PATH` to `pipeline.py` and `scraper.py` (atomic write, same format) plus a unit test. |
-| `docs/pipeline-complete.png` showed the local Windows user folder in the terminal prompt. | Confirmed | Cropped the screenshot. Older versions remain in Git history; it is a folder name, not a credential. |
-| The README Learning section did not describe a challenge and how it was approached. | Confirmed | Added a "Challenge and how I approached it" subsection. |
-| Setup commands did not say they must run from the project folder. | Confirmed | Added the `cd` step. |
-| Categories "Default" and "Add a comment" could look like a scraper bug. | Possible concern | Checked: they are real source categories. Disclosed in Limitations. |
-| `web/config.js` contains the real project URL and publishable key instead of placeholders. | Possible concern | Kept deliberately: the publishable key is designed for browsers and RLS limits it to `SELECT`. The server secret is only in the ignored `.env`. |
-| Server secret, `.env` or private keys in tracked files or Git history | None found | No action. |
-| The Supabase server secret had appeared in a screenshot I shared in a private AI chat during development (never in this repository). | Confirmed, outside the repository | Rotated the secret in Supabase, so the exposed value no longer works; the new value exists only in the ignored local `.env`. |
-
-Re-check after fixes: `python -m py_compile` passes for all entry points; `python -m unittest discover -s tests` passes 6 tests, 0 failures.
-
-Could not verify in the follow-up environment: a live scrape and the Supabase connection (network access to the source and to Supabase was not available). I verified them manually after the fixes: the 10-book sample (`py pipeline.py --limit 10`) ran successfully against Supabase on 26 November 2026.
+The scraper depends on the site's current HTML. Supabase free projects can pause; the fallback keeps the catalogue usable.

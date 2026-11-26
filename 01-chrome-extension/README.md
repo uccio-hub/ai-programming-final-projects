@@ -135,7 +135,7 @@ Assets: the three background images in `backgrounds/` are my own photos. The quo
 
 No tutorials or external code were used in this project beyond the AI assistance described here.
 
-AI assistance (ChatGPT/Codex) was used for iterative brainstorming, debugging suggestions, code review and documentation structure. I made the product decisions, executed the setup and Git commands, reviewed the generated suggestions, and manually verified the extension. See [`AUDIT.md`](AUDIT.md) for the exact final review and follow-through.
+AI assistance (ChatGPT/Codex) was used for iterative brainstorming, debugging suggestions, code review and documentation structure. I made the product decisions, executed the setup and Git commands, reviewed the generated suggestions, and manually verified the extension. See [`AUDIT.md`](AUDIT.md) for what the audit found and how I fixed it.
 
 ## Privacy and permissions
 
