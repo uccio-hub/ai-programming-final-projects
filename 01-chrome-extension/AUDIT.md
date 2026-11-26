@@ -1,7 +1,12 @@
 # Audit — Aurora Focus Chrome Extension
 
 Audit date: **19 November 2026**  
+Follow-up audit: **26 November 2026**  
 Scope: repository contents, privacy, exclusions, documentation, setup reproducibility and static validation.
+
+## How the audit was run
+
+The publication audit prompt from the course submission guidelines was run from the root of this project folder (`01-chrome-extension`), with ChatGPT Plus on 19 November and with Claude on 26 November. The assistant was asked not to print secret values, modify files, execute project code, commit or push. Its findings were reviewed one by one; the tables below record which ones required action and what was done. Finding no issues would not prove the project safe, so the checks were repeated after each round of fixes.
 
 ## 1. Baseline audit
 
@@ -22,7 +27,7 @@ Scope: repository contents, privacy, exclusions, documentation, setup reproducib
 - clarified Developer Mode, **Load unpacked**, the correct folder and reload behavior;
 - documented keyboard shortcuts, permissions, privacy, limitations and AI assistance;
 - added a screenshot and links to the detailed report and this audit;
-- added a project-level `.gitignore`.
+- planned a project-level `.gitignore` (it was only actually added in the follow-up audit, see section 6).
 
 ## 3. Re-check
 
@@ -37,8 +42,25 @@ Scope: repository contents, privacy, exclusions, documentation, setup reproducib
 
 ## 4. Manual verification completed
 
-The unpacked extension was reloaded in Chrome on 19 November 2026 with no runtime error. The new-tab override, daily-goal persistence, task persistence across tabs, focus timer start/pause/resume/reset controls and completed-task statistics were verified successfully. Notification delivery, export and full storage deletion remain optional edge-case checks.
+The unpacked extension was reloaded in Chrome on 19 November 2026 with no runtime error. Opening the dashboard from the toolbar, daily-goal persistence, task persistence across tabs, focus timer start/pause/resume/reset controls and completed-task statistics were verified successfully. The completion notification was verified on 20 November 2026 and is shown in the README screenshots. Export and full storage deletion remain optional edge-case checks.
 
 ## 5. Remaining limitations
 
 Data does not synchronize between browser profiles, clearing storage removes unexported information, and the extension is not distributed through the Chrome Web Store. These are disclosed in the README rather than hidden.
+
+## 6. Follow-up audit — 26 November 2026
+
+The audit prompt was run again on the final repository, after the last commits of 25 November.
+
+| Finding | Type | Action |
+|---|---|---|
+| This file said a project `.gitignore` had been added, but none existed in the folder. | Confirmed | Added `01-chrome-extension/.gitignore` (editor/OS files, logs, exported data). |
+| This file said the new-tab override had been verified, but `manifest.json` had no `chrome_url_overrides`; the dashboard only opened from the toolbar. | Confirmed | Added `chrome_url_overrides.newtab` so Aurora replaces the new tab page like Momentum, and corrected section 4. |
+| The notification was described as unverified here, while the README screenshot and the evidence PDF show it verified. | Confirmed | Aligned section 4 with the evidence. |
+| The README Learning section did not describe a challenge and how it was approached. | Confirmed | Added a "Challenge and how I approached it" subsection. |
+| Data collection did not apply but was not marked "Not applicable". | Confirmed | Marked it explicitly. |
+| Secrets, analytics, remote code, extra permissions | None found | No action. |
+
+Re-check after fixes: `node --check dashboard.js` and `node --check background.js` pass; `manifest.json` parses as JSON and still declares only `storage`, `alarms` and `notifications`.
+
+Manual check after the fixes (26 November 2026): the unpacked extension was reloaded in Chrome and a new tab opened the Aurora dashboard.

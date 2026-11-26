@@ -16,6 +16,8 @@ The project does not scrape TVmaze HTML and does not require an API key. It uses
 
 ## Data persistence and how data is saved
 
+There is no database: TVmaze remains the source of truth, so only small browser-local state is stored.
+
 - `localStorage` saves the user's watchlist and five recent searches across browser sessions.
 - `sessionStorage` caches API responses for 30 minutes to reduce repeated requests and provide a cached fallback during temporary network errors.
 - The application has no custom database or backend because TVmaze is the authoritative data source and the only persistent user state is small, browser-local preference data.
@@ -88,7 +90,7 @@ With Node.js installed:
 npm test
 ```
 
-The tests validate project structure, DOM contracts, endpoint coverage, security safeguards, responsive styles and advanced features. Final audit result: **5/5 checks passed**.
+The tests are static source-level checks: they read the HTML, CSS and JavaScript files and validate DOM contracts, endpoint coverage, security safeguards, responsive styles, advanced features and the suggestion-overflow fix. They do not call the live API. Result after the follow-up audit: **6/6 checks passed**.
 
 ## Security and resilience
 
@@ -104,6 +106,10 @@ The tests validate project structure, DOM contracts, endpoint coverage, security
 
 I learned how to read API documentation and translate multiple endpoints into one coherent data model. I practiced asynchronous JavaScript, request cancellation, concurrent requests, partial-failure handling, caching and URL-based application state. I also learned that robust API interfaces must represent loading, empty, cached, partial and error states—not only the successful response.
 
+### Challenge and how I approached it
+
+During manual testing I noticed that the live suggestion list was cut off where the hero section ended, so the first interaction a user sees looked broken. The cause was the hero clipping its overflow together with the stacking order of the decorative layer. I let the hero overflow, kept the decorative layer from capturing clicks, gave the suggestions their own layer and made long lists scroll inside a fixed height. I then added an automated check so that the fix cannot be undone silently.
+
 ## Limitations and assistance
 
 Limitations:
@@ -115,6 +121,8 @@ Limitations:
 - watchlist entries are local to one browser profile and are not synchronized;
 - there is no service worker/PWA installation and no automated live-API end-to-end test;
 - some optional resources may be absent for a show, so profiles can be partially complete.
+
+No tutorials or external code were used in this project beyond the AI assistance described here.
 
 AI assistance (ChatGPT/Codex) was used for API explanation, interface iteration, debugging, code review and documentation structure. I selected the features, ran and evaluated the app, reported interface problems, reviewed the fixes and verified the final search behavior. See [`AUDIT.md`](AUDIT.md) for the audit trail.
 

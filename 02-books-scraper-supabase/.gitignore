@@ -14,3 +14,4 @@ books.csv
 .DS_Store
 Thumbs.db
 
+*.json.tmp

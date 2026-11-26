@@ -1,0 +1,8 @@
+# Editor and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs and exported local data
+*.log
+aurora-*.json

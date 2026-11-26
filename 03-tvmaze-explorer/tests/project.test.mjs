@@ -37,3 +37,8 @@ test('responsive and reduced-motion styles exist', () => {
   assert.match(css, /prefers-reduced-motion/);
 });
 
+test('search suggestions are not clipped by the hero (regression)', () => {
+  assert.match(css, /\.hero\s*\{\s*overflow:\s*visible;?\s*\}/, 'The hero must let the suggestions overflow');
+  assert.match(css, /\.suggestions\s*\{[^}]*z-index:\s*\d+/, 'Suggestions need their own stacking layer');
+  assert.match(css, /\.suggestions\s*\{[^}]*max-height:[^}]*overflow:\s*auto/, 'Long suggestion lists must scroll internally');
+});

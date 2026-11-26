@@ -1,6 +1,6 @@
 # Aurora Focus — Chrome Extension
 
-Aurora Focus is a Manifest V3 Chrome extension that opens a private productivity dashboard from the browser toolbar. It combines a daily goal, editable tasks, focus/break timers, ambient sound and seven-day insights without an account or external server.
+Aurora Focus is a Manifest V3 Chrome extension that replaces Chrome's new tab page with a private productivity dashboard, as Momentum does. It combines a daily goal, editable tasks, focus/break timers, ambient sound and seven-day insights without an account or external server.
 
 ![Aurora Focus dashboard](docs/aurora-dashboard.png)
 
@@ -23,7 +23,7 @@ The project reinterprets the Momentum dashboard as a practical focus tool. Its g
 
 ## Data collection
 
-Aurora does not scrape websites, call an external API or collect analytics. The only data created is information the user deliberately enters or generates while using the extension: name, daily goal, tasks, settings and completed focus sessions.
+**Not applicable:** Aurora does not scrape websites, call an external API or collect analytics. The only data created is information the user deliberately enters or generates while using the extension: name, daily goal, tasks, settings and completed focus sessions.
 
 ## Data persistence
 
@@ -36,7 +36,7 @@ No data is transmitted to a custom server. The Settings panel lets the user expo
 
 ## User interaction
 
-The user opens Aurora from Chrome's toolbar, saves a goal, manages tasks and starts a focus or break session. The dashboard updates its insights when sessions and tasks are completed. The sparkle button cycles backgrounds; Settings controls personal preferences and data management.
+Aurora appears every time the user opens a new tab (it can also be opened from the toolbar icon). The user saves a goal, manages tasks and starts a focus or break session. The dashboard updates its insights when sessions and tasks are completed. The sparkle button cycles backgrounds; Settings controls personal preferences and data management.
 
 Keyboard shortcuts:
 
@@ -78,8 +78,8 @@ Requirements: desktop Google Chrome or another Chromium browser that supports un
 3. Enable **Developer mode** in the top-right corner.
 4. Select **Load unpacked**.
 5. Choose the `01-chrome-extension` folder — the folder that directly contains `manifest.json`.
-6. Pin **Aurora Focus** from Chrome's Extensions menu.
-7. Click its toolbar icon. Aurora opens in a new tab.
+6. Open a new tab (`Ctrl+T` / `Cmd+T`). Chrome may ask whether to keep the new tab page changed by the extension: choose **Keep it**.
+7. Optionally pin **Aurora Focus** from Chrome's Extensions menu; its toolbar icon also opens the dashboard.
 
 After changing source files, return to `chrome://extensions` and click the extension's **Reload** button.
 
@@ -87,7 +87,7 @@ After changing source files, return to `chrome://extensions` and click the exten
 
 | File/folder | Responsibility |
 |---|---|
-| `manifest.json` | Manifest V3 metadata, permissions, service worker and icons |
+| `manifest.json` | Manifest V3 metadata, new tab override, permissions, service worker and icons |
 | `background.js` | Toolbar action, alarms and Chrome notifications |
 | `dashboard.html` | Semantic interface and dialogs |
 | `dashboard.js` | Goals, tasks, timer, insights, settings, audio and export |
@@ -105,7 +105,7 @@ python -m json.tool manifest.json
 
 Manual acceptance checklist:
 
-- load the unpacked extension without manifest errors;
+- load the unpacked extension without manifest errors and confirm that a new tab shows Aurora;
 - save/edit a goal and add/edit/complete/delete a task;
 - start, pause, resume and reset focus and break timers;
 - close the dashboard during a short timer and confirm the notification;
@@ -117,6 +117,10 @@ Manual acceptance checklist:
 
 This project taught me how a browser extension differs from a normal website: it needs a manifest, explicit permissions and a background service worker. I also learned to coordinate page state with Chrome alarms, model persistent timer state from an end timestamp, use local-first storage deliberately, and design keyboard-accessible interactions without adding unnecessary permissions.
 
+### Challenge and how I approached it
+
+The hardest part was the timer. A countdown that only runs inside the page stops as soon as the dashboard tab is closed, so a focus session could silently never finish. I changed the model: when a session starts, the dashboard stores its end time, and the background service worker schedules a `chrome.alarms` alarm for that moment and shows the notification. When the dashboard is reopened, it rebuilds the remaining time from the stored end timestamp instead of trusting a counter. I tested it by closing the dashboard during a short session and waiting for the notification.
+
 ## Limitations and assistance
 
 Limitations:
@@ -126,6 +130,10 @@ Limitations:
 - Chrome controls notification delivery and always allows the user to exit full screen;
 - the extension is loaded unpacked for assessment and is not published in the Chrome Web Store;
 - automated browser-extension end-to-end tests are not included, so Chrome-specific flows require the manual checklist above.
+
+Assets: the three background images in `backgrounds/` are my own photos. The quotes are short attributed citations.
+
+No tutorials or external code were used in this project beyond the AI assistance described here.
 
 AI assistance (ChatGPT/Codex) was used for iterative brainstorming, debugging suggestions, code review and documentation structure. I made the product decisions, executed the setup and Git commands, reviewed the generated suggestions, and manually verified the extension. See [`AUDIT.md`](AUDIT.md) for the exact final review and follow-through.
 

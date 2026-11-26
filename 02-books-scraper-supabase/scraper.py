@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 import time
 from dataclasses import asdict, dataclass
@@ -246,12 +247,30 @@ def write_csv(rows: list[dict], path: str | Path) -> None:
     print(f"Saved {len(rows)} books to {destination.resolve()}")
 
 
+def write_json(rows: list[dict], path: str | Path) -> None:
+    """Write the browser fallback snapshot atomically, in the same compact format."""
+    if not rows:
+        raise ValueError("No books were scraped")
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_suffix(f"{destination.suffix}.tmp")
+    with temporary.open("w", encoding="utf-8") as file:
+        json.dump(rows, file, ensure_ascii=False, separators=(",", ":"))
+    temporary.replace(destination)
+    print(f"Saved {len(rows)} books to {destination.resolve()}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Scrape books.toscrape.com to a normalized CSV"
     )
     parser.add_argument("--limit", type=int, default=None, help="Maximum books")
     parser.add_argument("--output", default="books.csv", help="Destination CSV")
+    parser.add_argument(
+        "--export-json",
+        default=None,
+        help="Also write the web fallback snapshot, e.g. web/data/books-fallback.json",
+    )
     parser.add_argument("--delay", type=float, default=0.15, help="Request delay")
     parser.add_argument("--timeout", type=float, default=20, help="HTTP timeout")
     parser.add_argument(
@@ -267,6 +286,8 @@ def main() -> None:
             continue_on_error=not args.strict,
         )
         write_csv(rows, args.output)
+        if args.export_json:
+            write_json(rows, args.export_json)
 
 
 if __name__ == "__main__":

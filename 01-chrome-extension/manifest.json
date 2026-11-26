@@ -11,6 +11,9 @@
       "32": "icons/icon32.png"
     }
   },
+  "chrome_url_overrides": {
+    "newtab": "dashboard.html"
+  },
   "background": {
     "service_worker": "background.js"
   },

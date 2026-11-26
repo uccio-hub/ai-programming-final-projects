@@ -69,6 +69,12 @@ Requirements: Python 3.10+, internet access for scraping, and a Supabase project
 
 ### 1. Create the Python environment
 
+Run every command in this guide from the project folder:
+
+```bash
+cd 02-books-scraper-supabase
+```
+
 Windows PowerShell:
 
 ```powershell
@@ -118,6 +124,14 @@ py pipeline.py
 
 `test_connection.py` creates, reads and deletes one temporary row. The final command processes all 1,000 books. A repeated run performs idempotent updates.
 
+To refresh the browser fallback snapshot from the same run, add `--export-json`:
+
+```powershell
+py pipeline.py --export-json web/data/books-fallback.json
+```
+
+`scraper.py --export-json web/data/books-fallback.json` does the same without Supabase.
+
 ### 5. Run the web app
 
 For an offline/fallback demonstration, simply serve `web`:
@@ -139,15 +153,20 @@ For live Supabase data, first run `web/frontend_access.sql`, then set the projec
 | `--timeout 30` | Set the HTTP timeout |
 | `--batch-size 50` | Set Supabase upsert batch size |
 | `--skip-csv` | Skip the local CSV backup |
+| `--export-json PATH` | Also write the web fallback snapshot |
 | `--strict` | Stop on the first failed product |
 
 ## Testing
 
-The offline unit tests cover price normalization, stock parsing, deterministic HTML parsing, invalid configuration and CSV output. `test_connection.py` is a separate cloud smoke test. During the final audit, the complete unit suite passed (5 tests, 0 failures), the live Supabase write/read/delete check passed, and a 10-book pipeline sample completed with 10 successful synchronizations and no failures.
+The offline unit tests cover price normalization, stock parsing, deterministic HTML parsing, invalid configuration, CSV output and the JSON fallback export. `test_connection.py` is a separate cloud smoke test. During the final audit, the complete unit suite passed (5 tests, 0 failures), the live Supabase write/read/delete check passed, and a 10-book pipeline sample completed with 10 successful synchronizations and no failures.
 
 ## Learning
 
 I learned that scraping is not only selecting HTML elements: a reliable pipeline needs retries, rate awareness, normalization, stable identifiers and explicit failure handling. I also learned why idempotent upserts matter, how database constraints complement Python validation, how RLS separates a browser-safe read path from a private write path, and why an independent local backup makes a cloud-dependent project more reproducible.
+
+### Challenge and how I approached it
+
+The main challenge was letting a public web page read the database without exposing a key that can change it. The Python pipeline needs to write, the browser only needs to read, and anything placed in `web/config.js` is visible to every visitor. I split the two paths: the server secret lives only in the ignored `.env` and is used by `pipeline.py`, while the browser uses Supabase's publishable key. On its own that key would not be safe, so I enabled Row Level Security and added `frontend_access.sql`, which grants anonymous users `SELECT` only. I verified the result by checking that the catalogue loads live data while write operations remain reserved to the server role.
 
 ## Limitations and assistance
 
@@ -155,11 +174,14 @@ Limitations:
 
 - the scraper depends on the source HTML structure and selectors may break if the site changes;
 - the source is a training catalogue and omits fields such as author and publication date;
+- the source itself files some books under the categories "Default" (152 books) and "Add a comment" (67 books); these are real source values, kept as collected rather than guessed;
 - a full scrape makes about 1,050 requests and therefore takes time;
 - Supabase free projects may pause after inactivity and must be resumed before a live demo;
 - live execution depends on network access and valid project credentials;
-- the fallback snapshot is static until the pipeline/export process is repeated;
+- the fallback snapshot is static until the pipeline is run again with `--export-json`;
 - there is no production scheduler, monitoring or incremental change detection.
+
+No tutorials or external code were used in this project beyond the AI assistance described here.
 
 AI assistance (ChatGPT/Codex) was used to explain setup steps, review architecture, suggest defensive improvements and organize documentation. I executed the pipeline and database operations, inspected results, made the implementation decisions, and reviewed the final code. See [`AUDIT.md`](AUDIT.md) for the documented audit.
 

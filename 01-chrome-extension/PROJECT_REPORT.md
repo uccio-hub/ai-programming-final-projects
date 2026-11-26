@@ -8,7 +8,7 @@ The core design question is: **how can a browser extension support focus without
 
 ## 2. Main user flow
 
-1. The user opens the extension from the Chrome toolbar.
+1. The user opens a new tab (or clicks the toolbar icon) and Aurora appears.
 2. Aurora shows the current time, a personalised greeting and a daily goal.
 3. The user adds or completes tasks.
 4. Focus Mode starts a focus or break timer, optionally in full screen.
