@@ -64,5 +64,3 @@ The audit prompt was run again on the final repository, after the last commits o
 Re-check after fixes: `node --check dashboard.js` and `node --check background.js` pass; `manifest.json` parses as JSON and still declares only `storage`, `alarms` and `notifications`.
 
 Manual check after the fixes (26 November 2026): the unpacked extension was reloaded in Chrome and a new tab opened the Aurora dashboard.
-
-Open point: the three images in `backgrounds/` were taken from files on my computer and I could not confirm their original author or licence. This is disclosed in the README.

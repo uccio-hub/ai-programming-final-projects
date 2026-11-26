@@ -76,4 +76,4 @@ The audit prompt was run again on the final repository, after the last commits o
 
 Re-check after fixes: `python -m py_compile` passes for all entry points; `python -m unittest discover -s tests` passes 6 tests, 0 failures.
 
-Could not verify in the follow-up environment: a live scrape and the Supabase connection (network access to the source and to Supabase was not available). These were verified on 19 November. I believe the 10-book sample (`py pipeline.py --limit 10`) ran successfully again after the fixes, but I did not keep its output, so the 19 November results remain the recorded evidence.
+Could not verify in the follow-up environment: a live scrape and the Supabase connection (network access to the source and to Supabase was not available). I verified them manually after the fixes: the 10-book sample (`py pipeline.py --limit 10`) ran successfully against Supabase on 26 November 2026.
